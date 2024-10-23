@@ -17,6 +17,7 @@ const RootLayout = ({ children } :RootLayoutProps ) => {
   return (
     <html>
       <body>
+        <Provider>
         <div className="main">
           <div className="gradient" />
         </div>
@@ -24,6 +25,7 @@ const RootLayout = ({ children } :RootLayoutProps ) => {
           <Nav />
           {children}
         </main>
+        </Provider>
       </body>
     </html>
   )
