@@ -1,29 +1,67 @@
-import { sign } from "crypto";
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google"
+import NextAuth, { DefaultSession, Session } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import { connectToDB } from "@utils/database";
+import User from "@models/user";
+import { Profile } from "next-auth";
+
+// Extend the built-in session type
+
 
 const handler = NextAuth({
-  providers : [
+  providers: [
     GoogleProvider({
-      clientId:process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret:process.env.GOOGLE_CLIENT_ID || "",
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     })
   ],
-  callbacks : {
-    async session({ session }) {
-      return session;
-    },
-    async signIn({profile}) {
-      // Implement your sign-in logic here
-      try {
-
-      }catch (e){
+  callbacks: {
+    async session({ session }): Promise<Session> {
+      if (session.user?.email) {
+        const sessionUser = await User.findOne({
+          email: session.user.email
+        });
         
+        if (sessionUser) {
+          return {
+            ...session,
+            user: {
+              ...session.user,
+              id: sessionUser._id.toString()
+            }
+          };
+        }
       }
-      return true; // or return a string
+      return session as Session;
+    },
+    async signIn({ profile }: { profile?: Profile }) {
+      try {
+        if (!profile?.email) {
+          return false;
+        }
+
+        await connectToDB();
+
+        // Check if user already exists
+        const userExists = await User.findOne({
+          email: profile.email
+        });
+
+        // If not, create a new user
+        if (!userExists) {
+          await User.create({
+            email: profile.email,
+            username: profile.name?.replace(/\s+/g, "").toLowerCase() || "",
+            image: profile.image || ""
+          });
+        }
+
+        return true;
+      } catch (error) {
+        console.log("Error during sign in: ", error);
+        return false;
+      }
     }
   }
-  
-})
+});
 
-export {handler as GET,handler as POST}
+export { handler as GET, handler as POST };

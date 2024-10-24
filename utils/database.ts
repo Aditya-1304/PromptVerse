@@ -9,8 +9,11 @@ export const connectToDB = async ()=> {
     return;
   }
   try {
-
+    mongoose.connect(process.env.MONGODB_URI || "" , {
+      dbName : "share_prompt"
+    })
+    isConnected = true;
   }catch (e) {
-    
+    console.log(e)
   }
 }
