@@ -5,7 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Form from "@components/Form";
 
-const EditPrompt = () => {
+// Separate component that uses useSearchParams
+const EditPromptContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
@@ -29,7 +30,7 @@ const EditPrompt = () => {
     if (promptId) getPromptDetails();
   }, [promptId]);
 
-  const updatePrompt = async (e : any) => {
+  const updatePrompt = async (e: any) => {
     e.preventDefault();
     setSubmitting(true);
 
@@ -54,14 +55,21 @@ const EditPrompt = () => {
   };
 
   return (
+    <Form
+      type="Edit"
+      post={post}
+      setPost={setPost}
+      submitting={submitting}
+      handleSubmit={updatePrompt}
+    />
+  );
+};
+
+// Main component that wraps the content in Suspense
+const EditPrompt = () => {
+  return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Form
-        type="Edit"
-        post={post}
-        setPost={setPost}
-        submitting={submitting}
-        handleSubmit={updatePrompt}
-      />
+      <EditPromptContent />
     </Suspense>
   );
 };
