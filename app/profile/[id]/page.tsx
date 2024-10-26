@@ -38,7 +38,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ params }) => {
 
   return (
     <ProfileCard 
-      name={userName || ''}
+      name={userName + "'s" || ''}
       desc={`Welcome to ${userName}'s personalized profile page. Explore ${userName}'s Exceptional Prompts and be inspired by the power of their imagination`}
       data={userPosts}
     />
