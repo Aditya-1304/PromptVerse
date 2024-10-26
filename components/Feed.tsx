@@ -21,6 +21,7 @@ interface PromptCardListProps {
 }
 
 const PromptCardList: React.FC<PromptCardListProps> = ({ data, handleTagClick }) => {
+  console.log(data);
   return (
     <div className='mt-16 prompt_layout'>
       {data.map((post) => (
