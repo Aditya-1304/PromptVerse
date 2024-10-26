@@ -1,7 +1,6 @@
 import "@styles/global.css";
 import React, { Children, ReactNode } from "react";
-import { Analytics } from '@vercel/analytics/react';  // If this is the only export
-
+import { Analytics } from "@vercel/analytics/react"
 import Nav from "@components/Nav";
 import Provider from "@components/Provider";
 
